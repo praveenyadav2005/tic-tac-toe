@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+      integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins&display=swap"
+      rel="stylesheet"
+    />
+    <title>Tic-Tac-Toe</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+        /* transition: all .1s linear; */
+      }
+
+      body {
+        width: calc(100%);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+        justify-content: center;
+        background-color: rgb(31, 31, 31);
+      }
+      .btn-choose-div {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+        min-width: 250px;
+        width: 300px;
+        background-color: hsl(0, 0%, 85%);
+        border-radius: 10px;
+        padding: 15px 10px;
+      }
+      .select-player{
+   padding: 5px;
+      }
+      .player-btn{
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        justify-content: center;
+        align-content: center;
+        flex-wrap: wrap;
+        padding: 3px 5px;
+      }
+      .choose-btn {
+        padding: 7px 20px;
+        background-color:rgb(31, 31, 31) ;
+        color: white;
+        font-size: 17px;
+        border-radius: 5px;
+      }
+
+      .game-cont {
+        min-width: 250px;
+        width: 300px;
+        aspect-ratio: 1;
+        background-color: hsl(0, 0%, 85%);
+        border-radius: 10px;
+        padding: 5px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        /* gap: 10px; */
+      }
+      .btn {
+        border: 2px solid #3f3f3f;
+        padding: 5px;
+        background-color: hsl(0, 0%, 85%);
+        cursor: pointer;
+        border-collapse: collapse;
+        font-size: 50px;
+      }
+      #btn-1,
+      #btn-2,
+      #btn-3 {
+        border-top: 0;
+      }
+      #btn-1,
+      #btn-4,
+      #btn-7 {
+        border-left: 0;
+      }
+      #btn-3,
+      #btn-6,
+      #btn-9 {
+        border-right: 0;
+      }
+      #btn-7,
+      #btn-8,
+      #btn-9 {
+        border-bottom: 0;
+      }
+
+      .result {
+        min-width: 250px;
+        width: 300px;
+        /* aspect-ratio: 1; */
+        background-color: hsl(0, 0%, 85%);
+        border-radius: 10px;
+        display: flex;
+        padding: 20px 10px;
+        flex-direction: column;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+        font-size: 20px;
+      }
+      .replay-btn,
+      .play-btn {
+        padding: 8px 24.5px;
+        font-size: 20px;
+        border-radius: 5px;
+        background-color: rgb(31, 31, 31);
+        color: white;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="btn-choose-div hidden">
+      <div class="select-player"><h2>Select Player</h2></div>
+      <div class="player-btn">
+      <button class="choose-btn" id="btn-X">Choose X</button>
+      <button class="choose-btn" id="btn-O">Choose O</button>
+    </div>
+    </div>
+    <div class="result play">
+      <button class="play-btn">Play  &nbsp; <i class="fa-solid fa-play"></i></button>
+    </div>
+    <div class="game-cont hidden">
+      <button class="btn" id="btn-1"></button>
+      <button class="btn" id="btn-2"></button>
+      <button class="btn" id="btn-3"></button>
+      <button class="btn" id="btn-4"></button>
+      <button class="btn" id="btn-5"></button>
+      <button class="btn" id="btn-6"></button>
+      <button class="btn" id="btn-7"></button>
+      <button class="btn" id="btn-8"></button>
+      <button class="btn" id="btn-9"></button>
+    </div>
+
+    <script>
+      const gameDiv = document.querySelector(".game-cont");
+      const xBtn = document.getElementById("btn-X");
+      const oBtn = document.getElementById("btn-O");
+      const btnChooseDiv = document.querySelector(".btn-choose-div");
+      const playDiv = document.querySelector(".play");
+      let player = "";
+      let player2 = "";
+      let gArr = [];
+
+      function checkEquality(variables, value) {
+        return variables.every((variable) => variable === value);
+      }
+
+      function Animate(elem) {
+        let id = setInterval(zoom, 5);
+        elem.style.scale = 0;
+        elem.style.transformOrigin = "top";
+        let scale = 0;
+        function zoom() {
+          if (elem.style.scale >= 1) {
+            clearInterval(id);
+          } else {
+            elem.style.scale = scale;
+            scale = scale + 0.1;
+          }
+        }
+      }
+
+      function CompPlay() {
+        let rNum = Math.trunc(Math.random() * 9);
+        let cond = true;
+        while (cond) {
+          if (gArr[rNum] == player || gArr[rNum] == player2) {
+            rNum = Math.trunc(Math.random() * 9);
+          } else {
+            gArr[rNum] = player2;
+            gameDiv.children[rNum].innerText = player2;
+            cond = false;
+          }
+        }
+      }
+
+      const Resultshow = (ply) => {
+        let playerChoice = "";
+        if (ply == player) playerChoice = "You";
+        else if (ply == player2) playerChoice = "Computer";
+        else playerChoice = "No one";
+        gameDiv.innerHTML = `<h2>${playerChoice} wins</h2>
+      <button class="replay-btn">Replay &nbsp; <i class="fa-solid fa-rotate-right"></i></button>`;
+        gameDiv.classList.add("result");
+        gameDiv.classList.remove("game-cont");
+        document.querySelector(".replay-btn").addEventListener("click", () => {
+          window.location.reload();
+        });
+      };
+      const WinCond = (gA) => {
+        if (
+          checkEquality([gA[0], gA[1], gA[2]], player) ||
+          checkEquality([gA[3], gA[4], gA[5]], player) ||
+          checkEquality([gA[6], gA[7], gA[8]], player) ||
+          checkEquality([gA[0], gA[3], gA[6]], player) ||
+          checkEquality([gA[1], gA[4], gA[7]], player) ||
+          checkEquality([gA[2], gA[5], gA[8]], player) ||
+          checkEquality([gA[0], gA[4], gA[8]], player) ||
+          checkEquality([gA[2], gA[4], gA[6]], player)
+        ) {
+          setTimeout(() => {
+            Resultshow(player);
+          }, 500);
+        } else {
+          if (
+            checkEquality([gA[0], gA[1], gA[2]], player2) ||
+            checkEquality([gA[3], gA[4], gA[5]], player2) ||
+            checkEquality([gA[6], gA[7], gA[8]], player2) ||
+            checkEquality([gA[0], gA[3], gA[6]], player2) ||
+            checkEquality([gA[1], gA[4], gA[7]], player2) ||
+            checkEquality([gA[2], gA[5], gA[8]], player2) ||
+            checkEquality([gA[0], gA[4], gA[8]], player2) ||
+            checkEquality([gA[2], gA[4], gA[6]], player2)
+          ) {
+            setTimeout(() => {
+              Resultshow(player2);
+            }, 500);
+          } else {
+            if (chances == 9)
+              setTimeout(() => {
+                Resultshow("Z");
+              }, 500);
+          }
+        }
+      };
+
+      window.addEventListener("load", () => {
+        document.querySelector(".play-btn").addEventListener("click", () => {
+          playDiv.classList.add("hidden");
+          btnChooseDiv.classList.remove("hidden");
+          // gameDiv.classList.remove("hidden");
+          Animate(gameDiv);
+        });
+      });
+
+      let chooseDivClicked = 0;
+      btnChooseDiv.addEventListener(
+        "click",
+        (e) => {
+          if (e.target.classList.contains("choose-btn")) {
+            player = e.target.textContent.slice(7, 8);
+            if (player == "X") player2 = "O";
+            else if (player == "O") player2 = "X";
+            chooseDivClicked = 1;
+            btnChooseDiv.style.display = "none";
+            gameDiv.classList.remove("hidden");
+          }
+        },
+        true
+      );
+
+      let i = 0;
+      for (let item of gameDiv.children) {
+        item.setAttribute("data-num", i++);
+      }
+      let chances = 0;
+      gameDiv.addEventListener("click", (e) => {
+        if (chooseDivClicked) {
+          if (e.target.classList.contains("btn")) {
+            e.target.innerText = player;
+            gArr[e.target.getAttribute("data-num")] = e.target.innerText;
+            chances++;
+            if (chances >= 5) WinCond(gArr);
+            if (chances <= 8) CompPlay();
+            chances++;
+            if (chances >= 5) WinCond(gArr);
+            // console.log(gArr);
+          }
+        } else alert(`First choose player `);
+      });
+    </script>
+  </body>
+</html>
