@@ -201,17 +201,17 @@
 
       function CompPlay() {
         // setTimeout(() => {
-          let rNum = Math.trunc(Math.random() * 9);
-          let cond = true;
-          while (cond) {
-            if (gArr[rNum] == player || gArr[rNum] == player2) {
-              rNum = Math.trunc(Math.random() * 9);
-            } else {
-              gArr[rNum] = player2;
-              gameDiv.children[rNum].innerText = player2;
-              cond = false;
-            }
+        let rNum = Math.trunc(Math.random() * 9);
+        let cond = true;
+        while (cond) {
+          if (gArr[rNum] == player || gArr[rNum] == player2) {
+            rNum = Math.trunc(Math.random() * 9);
+          } else {
+            gArr[rNum] = player2;
+            gameDiv.children[rNum].innerText = player2;
+            cond = false;
           }
+        }
         // }, 200);
       }
 
@@ -248,27 +248,25 @@
         ) {
           setTimeout(() => {
             Resultshow(player);
-          }, 800);
+          }, 500);
+        } else if (
+          checkEquality([gA[0], gA[1], gA[2]], player2) ||
+          checkEquality([gA[3], gA[4], gA[5]], player2) ||
+          checkEquality([gA[6], gA[7], gA[8]], player2) ||
+          checkEquality([gA[0], gA[3], gA[6]], player2) ||
+          checkEquality([gA[1], gA[4], gA[7]], player2) ||
+          checkEquality([gA[2], gA[5], gA[8]], player2) ||
+          checkEquality([gA[0], gA[4], gA[8]], player2) ||
+          checkEquality([gA[2], gA[4], gA[6]], player2)
+        ) {
+          setTimeout(() => {
+            Resultshow(player2);
+          }, 500);
         } else {
-          if (
-            checkEquality([gA[0], gA[1], gA[2]], player2) ||
-            checkEquality([gA[3], gA[4], gA[5]], player2) ||
-            checkEquality([gA[6], gA[7], gA[8]], player2) ||
-            checkEquality([gA[0], gA[3], gA[6]], player2) ||
-            checkEquality([gA[1], gA[4], gA[7]], player2) ||
-            checkEquality([gA[2], gA[5], gA[8]], player2) ||
-            checkEquality([gA[0], gA[4], gA[8]], player2) ||
-            checkEquality([gA[2], gA[4], gA[6]], player2)
-          ) {
+          if (chances >= 9)
             setTimeout(() => {
-              Resultshow(player2);
-            }, 800);
-          } else {
-            if (chances == 9)
-              setTimeout(() => {
-                Resultshow("Z");
-              }, 500);
-          }
+              Resultshow("Z");
+            }, 500);
         }
       };
 
@@ -315,19 +313,20 @@
         gameDiv.addEventListener("click", (e) => {
           if (e.target.classList.contains("btn")) {
             e.target.innerText = player;
-            gArr[e.target.getAttribute("data-num")] = e.target.innerText;
             chances++;
+            gArr[e.target.getAttribute("data-num")] = e.target.innerText;
             console.log(gArr);
-            if (chances >= 5) {
+            if (chances >= 6) {
               WinCond(gArr);
-              if (chances <= 8) CompPlay();
-            console.log(gArr);
-              chances++;
-              WinCond(gArr);
+              if (chances <= 8) {
+                CompPlay();
+                console.log(gArr);
+                chances++;
+                WinCond(gArr);
+              }
             } else {
               CompPlay();
-            console.log(gArr);
-
+              console.log(gArr);
               chances++;
             }
           }
