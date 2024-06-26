@@ -36,7 +36,8 @@
         justify-content: center;
         background-color: rgb(31, 31, 31);
       }
-      .btn-choose-div {
+      .btn-choose-div,
+      .turn-show {
         display: flex;
         flex-direction: column;
         gap: 20px;
@@ -47,10 +48,11 @@
         border-radius: 10px;
         padding: 15px 10px;
       }
-      .select-player{
-   padding: 5px;
+      .select-player {
+        padding: 5px;
       }
-      .player-btn{
+      .player-btn,
+      .play-btn-div {
         display: flex;
         gap: 20px;
         align-items: center;
@@ -58,13 +60,6 @@
         align-content: center;
         flex-wrap: wrap;
         padding: 3px 5px;
-      }
-      .choose-btn {
-        padding: 7px 20px;
-        background-color:rgb(31, 31, 31) ;
-        color: white;
-        font-size: 17px;
-        border-radius: 5px;
       }
 
       .game-cont {
@@ -80,12 +75,13 @@
         /* gap: 10px; */
       }
       .btn {
-        border: 2px solid #3f3f3f;
+        /* border: 2px solid #3f3f3f; */
         padding: 5px;
         background-color: hsl(0, 0%, 85%);
         cursor: pointer;
         border-collapse: collapse;
         font-size: 50px;
+        /* border-radius: 10px; */
       }
       #btn-1,
       #btn-2,
@@ -123,12 +119,16 @@
         font-size: 20px;
       }
       .replay-btn,
-      .play-btn {
+      .play-btn,
+      .choose-btn {
         padding: 8px 24.5px;
         font-size: 20px;
         border-radius: 5px;
         background-color: rgb(31, 31, 31);
         color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
       .hidden {
         display: none;
@@ -139,12 +139,23 @@
     <div class="btn-choose-div hidden">
       <div class="select-player"><h2>Select Player</h2></div>
       <div class="player-btn">
-      <button class="choose-btn" id="btn-X">Choose X</button>
-      <button class="choose-btn" id="btn-O">Choose O</button>
-    </div>
+        <button class="choose-btn" id="btn-X">Choose X</button>
+        <button class="choose-btn" id="btn-O">Choose O</button>
+      </div>
     </div>
     <div class="result play">
-      <button class="play-btn">Play  &nbsp; <i class="fa-solid fa-play"></i></button>
+      <h2>Choose Mode</h2>
+      <div class="play-btn-div">
+        <button class="play-btn single">
+          Single &nbsp; &nbsp;<img src="./images/player (2).png" width="40px" />
+        </button>
+        <button class="play-btn double">
+          Double &nbsp; &nbsp; <img src="./images/match (1).png" width="40px" />
+        </button>
+      </div>
+    </div>
+    <div class="turn-show hidden">
+      <h2>X turn</h2>
     </div>
     <div class="game-cont hidden">
       <button class="btn" id="btn-1"></button>
@@ -164,8 +175,9 @@
       const oBtn = document.getElementById("btn-O");
       const btnChooseDiv = document.querySelector(".btn-choose-div");
       const playDiv = document.querySelector(".play");
-      let player = "";
-      let player2 = "";
+      const turnDiv = document.querySelector(".turn-show");
+      let player = "X";
+      let player2 = "O";
       let gArr = [];
 
       function checkEquality(variables, value) {
@@ -188,28 +200,37 @@
       }
 
       function CompPlay() {
-        let rNum = Math.trunc(Math.random() * 9);
-        let cond = true;
-        while (cond) {
-          if (gArr[rNum] == player || gArr[rNum] == player2) {
-            rNum = Math.trunc(Math.random() * 9);
-          } else {
-            gArr[rNum] = player2;
-            gameDiv.children[rNum].innerText = player2;
-            cond = false;
+        setTimeout(() => {
+          let rNum = Math.trunc(Math.random() * 9);
+          let cond = true;
+          while (cond) {
+            if (gArr[rNum] == player || gArr[rNum] == player2) {
+              rNum = Math.trunc(Math.random() * 9);
+            } else {
+              gArr[rNum] = player2;
+              gameDiv.children[rNum].innerText = player2;
+              cond = false;
+            }
           }
-        }
+        }, 200);
       }
 
       const Resultshow = (ply) => {
         let playerChoice = "";
-        if (ply == player) playerChoice = "You";
-        else if (ply == player2) playerChoice = "Computer";
+        if (ply == player)
+          // playerChoice = 'You';
+          playerChoice = player;
+        else if (ply == player2)
+          // playerChoice = "Computer";
+          playerChoice = player2;
         else playerChoice = "No one";
+
         gameDiv.innerHTML = `<h2>${playerChoice} wins</h2>
       <button class="replay-btn">Replay &nbsp; <i class="fa-solid fa-rotate-right"></i></button>`;
         gameDiv.classList.add("result");
         gameDiv.classList.remove("game-cont");
+        turnDiv.classList.add("hidden");
+
         document.querySelector(".replay-btn").addEventListener("click", () => {
           window.location.reload();
         });
@@ -252,11 +273,17 @@
       };
 
       window.addEventListener("load", () => {
-        document.querySelector(".play-btn").addEventListener("click", () => {
+        document.querySelector(".single").addEventListener("click", () => {
           playDiv.classList.add("hidden");
           btnChooseDiv.classList.remove("hidden");
-          // gameDiv.classList.remove("hidden");
           Animate(gameDiv);
+        });
+        document.querySelector(".double").addEventListener("click", () => {
+          playDiv.classList.add("hidden");
+          gameDiv.classList.remove("hidden");
+          turnDiv.classList.remove("hidden");
+          Animate(gameDiv);
+          DoublePlay();
         });
       });
 
@@ -270,7 +297,9 @@
             else if (player == "O") player2 = "X";
             chooseDivClicked = 1;
             btnChooseDiv.style.display = "none";
+            // turnDiv.classList.remove("hidden");
             gameDiv.classList.remove("hidden");
+            SinglePlay();
           }
         },
         true
@@ -280,21 +309,52 @@
       for (let item of gameDiv.children) {
         item.setAttribute("data-num", i++);
       }
-      let chances = 0;
-      gameDiv.addEventListener("click", (e) => {
-        if (chooseDivClicked) {
+
+      function SinglePlay() {
+        let chances = 0;
+        gameDiv.addEventListener("click", (e) => {
           if (e.target.classList.contains("btn")) {
             e.target.innerText = player;
             gArr[e.target.getAttribute("data-num")] = e.target.innerText;
             chances++;
-            if (chances >= 5) WinCond(gArr);
-            if (chances <= 8) CompPlay();
+            if (chances >= 5) {
+              WinCond(gArr);
+              if (chances <= 8) CompPlay();
+              chances++;
+              WinCond(gArr);
+            } else {
+              CompPlay();
+              chances++;
+            }
+          }
+        });
+      }
+
+      let chances = 0;
+      let currPlayer = "";
+      let nextPlayer = "";
+      function UpdateDoubleTurn() {
+        if (chances % 2 == 0) {
+          currPlayer = player;
+          nextPlayer = player2;
+        } else {
+          currPlayer = player2;
+          nextPlayer = player;
+        }
+        turnDiv.innerHTML = `<h2>${nextPlayer} turn</h2>`;
+      }
+
+      function DoublePlay() {
+        gameDiv.addEventListener("click", (e) => {
+          if (e.target.classList.contains("btn")) {
+            UpdateDoubleTurn();
+            e.target.innerText = currPlayer;
+            gArr[e.target.getAttribute("data-num")] = e.target.innerText;
             chances++;
             if (chances >= 5) WinCond(gArr);
-            // console.log(gArr);
           }
-        } else alert(`First choose player `);
-      });
+        });
+      }
     </script>
   </body>
 </html>
