@@ -147,10 +147,10 @@
       <h2>Choose Mode</h2>
       <div class="play-btn-div">
         <button class="play-btn single">
-          Single &nbsp; &nbsp;<img src="./images/player (2).png" width="40px" />
+          Single &nbsp; &nbsp;<img src="./images/player (2).png" width="41px" />
         </button>
         <button class="play-btn double">
-          Double &nbsp; &nbsp; <img src="./images/match (1).png" width="40px" />
+          Double &nbsp; &nbsp; <img src="./images/match (1).png" width="35px" />
         </button>
       </div>
     </div>
@@ -200,7 +200,7 @@
       }
 
       function CompPlay() {
-        setTimeout(() => {
+        // setTimeout(() => {
           let rNum = Math.trunc(Math.random() * 9);
           let cond = true;
           while (cond) {
@@ -212,7 +212,7 @@
               cond = false;
             }
           }
-        }, 200);
+        // }, 200);
       }
 
       const Resultshow = (ply) => {
@@ -248,7 +248,7 @@
         ) {
           setTimeout(() => {
             Resultshow(player);
-          }, 500);
+          }, 800);
         } else {
           if (
             checkEquality([gA[0], gA[1], gA[2]], player2) ||
@@ -262,7 +262,7 @@
           ) {
             setTimeout(() => {
               Resultshow(player2);
-            }, 500);
+            }, 800);
           } else {
             if (chances == 9)
               setTimeout(() => {
@@ -317,13 +317,17 @@
             e.target.innerText = player;
             gArr[e.target.getAttribute("data-num")] = e.target.innerText;
             chances++;
+            console.log(gArr);
             if (chances >= 5) {
               WinCond(gArr);
               if (chances <= 8) CompPlay();
+            console.log(gArr);
               chances++;
               WinCond(gArr);
             } else {
               CompPlay();
+            console.log(gArr);
+
               chances++;
             }
           }
